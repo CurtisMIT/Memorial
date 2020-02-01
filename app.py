@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_file
 from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////mnt/c/Users/antho/Documents/database_files/filestorage.db'
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -16,14 +17,16 @@ def hello():
 
 @app.route("/add")
 def add_person():
-    name=request.args.get('name')
-    birth=request.args.get('birth')
-    dead=request.args.get('dead')
+    name    =request.args.get('name')
+    birth   =request.args.get('birth')
+    dead    =request.args.get('dead')
+    bio     =request.args.get('bio')
     try:
         person=Person(
-            name=name,
-            birth=birth,
-            dead=dead
+            name    =name,
+            birth   =birth,
+            dead    =dead,
+            bio     =bio,
         )
         db.session.add(person)
         db.session.commit()
@@ -54,13 +57,15 @@ def get_by_id(id_):
 def add_person_form():
     if request.method == 'POST':
         name    =request.form.get('name')
-        birth   =request.form.get('bith')
+        birth   =request.form.get('birth')
         dead    =request.form.get('dead')
+        bio     =request.form.get('bio')
         try:
             person=Person(
                 name    =name,
                 birth   =birth,
-                dead    =dead
+                dead    =dead,
+                bio     =bio,
             )
             db.session.add(person)
             db.session.commit()
@@ -69,9 +74,5 @@ def add_person_form():
             return(str(e))
     return render_template("getdata.html")
     
-# @app.route('/<name>')
-# def hello_name(name):
-#     return "Hello {}!".format(name)
-
 if __name__ == '__main__':
     app.run()
