@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 print(os.environ['APP_SETTINGS'])
 
-# from models import Person
+from models import Person
 
 @app.route('/')
 def hello():
