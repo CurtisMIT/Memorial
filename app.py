@@ -1,12 +1,12 @@
-from flask import Flask, request, jsonify, render_template, send_file
+from flask import Flask, request, jsonify, render_template, send_file, redirect
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug import secure_filename
 import os
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////mnt/c/Users/antho/Documents/database_files/filestorage.db'
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["IMAGE_UPLOADS"] = "/Users/elaine/Desktop/projects/Memorial/templates"
 db = SQLAlchemy(app)
 # print(os.environ['APP_SETTINGS'])
 
@@ -16,12 +16,13 @@ from models import Person, Milestone, Entry
 def hello():
     return "Hello World!"
 
-@app.route("/add")
+@app.route("/add", methods = ['GET', 'POST'])
 def add_person():
     name    =request.args.get('name')
     birth   =request.args.get('birth')
     dead    =request.args.get('dead')
     bio     =request.args.get('bio')
+    
     try:
         person=Person(
             name    =name,
@@ -34,18 +35,17 @@ def add_person():
         return "person added. person id={}".format(person.id)
     except Exception as e:
 	    return(str(e))
-#http://127.0.0.1:5000/add?name=Twilight&birth=Stephenie Meyer&dead=2006
-
-# @app.route('/upload')
-# def upload_file():
-#    return render_template('upload.html')
-
-# @app.route('/uploader', methods = ['GET', 'POST'])
-# def upload_file():
-#    if request.method == 'POST':
-#       f = request.files['file']
-#       f.save(secure_filename(f.filename))
-#       return 'file uploaded successfully'
+    
+@app.route('/upload')
+def upload_file():
+   return render_template('upload.html')
+	
+@app.route('/uploader', methods = ['GET', 'POST'])
+def upload_file_1():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename(f.filename))
+      return 'file uploaded successfully'
 
 #returns a list of all deceased 
 @app.route("/getall")
@@ -72,6 +72,9 @@ def add_person_form():
         birth   =request.form.get('birth')
         dead    =request.form.get('dead')
         bio     =request.form.get('bio')
+
+        f = request.files['file']
+        f.save(secure_filename(f.filename))
         try:
             person=Person(
                 name    =name,
@@ -107,9 +110,6 @@ def create_a_person():
         return "Person added. Person id = {}".format(person.id)
     except Exception as e:
         return(str(e))
-
-@app.route("/")
-
 
 @app.route("/milestone", methods = ['POST'])
 def add_a_milestone():
