@@ -8,8 +8,8 @@ class Person(db.Model):
     birth   = db.Column(db.String())
     dead    = db.Column(db.String())
     bio     = db.Column(db.String())
-    milestones = db.relationship('Milestone', backref='person')
-    entries = db.relationship('Entry', backref='person')
+    milestones = db.relationship('Milestone', backref='Person')
+    entries = db.relationship('Entry', backref='Person')
 
     def __init__(self, name, birth, dead, bio):
         self.name = name
@@ -31,12 +31,11 @@ class Person(db.Model):
 
 class Milestone(db.Model):
     __tablename__ = 'milestones'
-
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
     year = db.Column(db.String())
     description = db.Column(db.String())
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    person_id = db.Column(db.Integer, db.ForeignKey('people.id'))
 
     def __init__(self, title, year, description, person_id):
         self.title = title
@@ -61,10 +60,9 @@ class Entry(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String())
-    person_id = db.Column(db.Integer, db.ForeignKey('person.id'))
+    person_id = db.Column(db.Integer, db.ForeignKey('people.id'))
 
     def __init__(self, content, person_id):
-        self.name = name
         self.content = content 
         self.person_id = person_id
 

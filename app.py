@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template, send_file
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug import secure_filename
 import os
 
 app = Flask(__name__)
@@ -35,6 +36,17 @@ def add_person():
 	    return(str(e))
 #http://127.0.0.1:5000/add?name=Twilight&birth=Stephenie Meyer&dead=2006
 
+# @app.route('/upload')
+# def upload_file():
+#    return render_template('upload.html')
+
+# @app.route('/uploader', methods = ['GET', 'POST'])
+# def upload_file():
+#    if request.method == 'POST':
+#       f = request.files['file']
+#       f.save(secure_filename(f.filename))
+#       return 'file uploaded successfully'
+
 #returns a list of all deceased 
 @app.route("/getall")
 def get_all():
@@ -45,10 +57,10 @@ def get_all():
 	    return(str(e))
 
 #returns the deceased info based on given id 
-@app.route("/get/<id_>")
-def get_by_id(id_):
+@app.route("/person/<id>")
+def get_by_id(id):
     try:
-        person=Person.query.filter_by(id=id_).first()
+        person=Person.query.filter_by(id=id).first()
         return jsonify(person.serialize())
     except Exception as e:
 	    return(str(e))
@@ -96,6 +108,8 @@ def create_a_person():
     except Exception as e:
         return(str(e))
 
+@app.route("/")
+
 
 @app.route("/milestone", methods = ['POST'])
 def add_a_milestone():
@@ -121,7 +135,7 @@ def add_a_milestone():
 
 @app.route("/entry", methods = ["POST"])
 def add_an_entry():
-    req_data = request.getjson()
+    req_data = request.get_json()
 
     content = req_data['content']
     person_id = req_data['person_id']
