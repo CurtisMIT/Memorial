@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, render_template, send_file, redirect
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug import secure_filename
 import os
 
 app = Flask(__name__)
+cors = CORS(app)
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["IMAGE_UPLOADS"] = "/Users/elaine/Desktop/projects/Memorial/templates"
@@ -137,10 +139,16 @@ def add_a_milestone():
 def add_an_entry():
     req_data = request.get_json()
 
+    name = req_data['name']
+    relation = req_data['relation']
+    title = req_data['title']
     content = req_data['content']
     person_id = req_data['person_id']
     try:
         entry = Entry(
+            name = name,
+            relation = relation,
+            title = title,
             content = content,
             person_id = person_id
         )
@@ -149,6 +157,15 @@ def add_an_entry():
         return "Entry added. Entry id = {}".format(entry.id)
     except Exception as e:
         return(str(e))
+
+@app.route("/entry/<id>", methods = ["GET"])
+def get_entries_from_id(id):
+    try:
+        entry = Entry.query.filter_by(person_id=id).first()
+        return jsonify(entry.serialize())
+    except Exception as e:
+        return(str(e))
+
     
 if __name__ == '__main__':
     app.run()

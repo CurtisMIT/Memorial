@@ -59,10 +59,16 @@ class Entry(db.Model):
     __tablename__ = 'guest_entries'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    relation = db.Column(db.String())
+    title = db.Column(db.String())
     content = db.Column(db.String())
     person_id = db.Column(db.Integer, db.ForeignKey('people.id'))
 
-    def __init__(self, content, person_id):
+    def __init__(self, name, relation, title, content, person_id):
+        self.name = name
+        self.relation = relation
+        self.title = title
         self.content = content 
         self.person_id = person_id
 
@@ -72,6 +78,9 @@ class Entry(db.Model):
     def serialize(self):
         return {
             'id': self.id,
+            'name': self.name,
+            'relation': self.relation,
+            'title': self.title,
             'content': self.content,
             'person_id': self.person_id
         }
