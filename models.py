@@ -32,14 +32,14 @@ class Person(db.Model):
 class Milestone(db.Model):
     __tablename__ = 'milestones'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String())
-    year = db.Column(db.String())
+    start = db.Column(db.String())
+    end = db.Column(db.String())
     description = db.Column(db.String())
     person_id = db.Column(db.Integer, db.ForeignKey('people.id'))
 
-    def __init__(self, title, year, description, person_id):
-        self.title = title
-        self.year = year 
+    def __init__(self, start, end, description, person_id):
+        self.start = start
+        self.end = end
         self.description = description
         self.person_id = person_id
 
@@ -49,8 +49,8 @@ class Milestone(db.Model):
     def serialize(self):
         return {
             'id': self.id,
-            'title': self.title,
-            'year': self.year,
+            'start': self.start,
+            'end': self.end,
             'description': self.description,
             'person_id': self.person_id
         }

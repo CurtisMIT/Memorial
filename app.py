@@ -117,15 +117,15 @@ def create_a_person():
 def add_a_milestone():
     req_data = request.get_json()
 
-    title = req_data['title']
-    year = req_data['year']
+    start = req_data['start']
+    end = req_data['end']
     description = req_data['description']
     person_id = req_data['person_id']
 
     try:
         milestone = Milestone(
-            title = title,
-            year = year,
+            start = start,
+            end = end,
             description = description,
             person_id = person_id
         )
@@ -135,13 +135,21 @@ def add_a_milestone():
     except Exception as e:
         return(str(e))
 
-@app.route("/milestone/<person_id>")
-def getMilestone_by_id(person_id):
+# @app.route("/milestone/<person_id>")
+# def getMilestone_by_id(person_id):
+#     try:
+#         person=Person.query.filter_by(person_id=person_id).first()
+#         return jsonify(person.serialize())
+#     except Exception as e:
+# 	    return(str(e))
+
+@app.route("/milestone/<id>", methods = ["GET"])
+def get_milestones_from_id(id):
     try:
-        person=Person.query.filter_by(person_id=person_id).first()
-        return jsonify(person.serialize())
+        milestone = Milestone.query.filter_by(person_id=id).first()
+        return jsonify(milestone.serialize())
     except Exception as e:
-	    return(str(e))
+        return(str(e))
 
 @app.route("/entry", methods = ["POST"])
 def add_an_entry():
