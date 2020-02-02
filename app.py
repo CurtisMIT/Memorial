@@ -24,7 +24,7 @@ def add_person():
     birth   =request.args.get('birth')
     dead    =request.args.get('dead')
     bio     =request.args.get('bio')
-    
+
     try:
         person=Person(
             name    =name,
@@ -134,6 +134,14 @@ def add_a_milestone():
         return "Milestone added. Milestone id = {}".format(milestone.id)
     except Exception as e:
         return(str(e))
+
+@app.route("/milestone/<person_id>")
+def getMilestone_by_id(person_id):
+    try:
+        person=Person.query.filter_by(person_id=person_id).first()
+        return jsonify(person.serialize())
+    except Exception as e:
+	    return(str(e))
 
 @app.route("/entry", methods = ["POST"])
 def add_an_entry():
